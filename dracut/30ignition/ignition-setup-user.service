@@ -5,6 +5,8 @@ ConditionPathExists=/etc/initrd-release
 DefaultDependencies=false
 Before=ignition-complete.target
 
+After=multipathd.service
+
 Before=local-fs-pre.target
 Before=ignition-disks.service
 Before=ignition-files.service

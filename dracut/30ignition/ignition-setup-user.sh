@@ -11,6 +11,20 @@ copy_file_if_exists() {
     fi
 }
 
+# Prefer multipath boot
+udevadm trigger
+udevadm settle
+boot=
+for dev in "$(blkid -t LABEL="boot" | cut -f1 -d':')";
+do
+    eval "$(udevadm info -x -q property ${dev} )"
+    #if [ "${MPATH_DEVICE_READY:-0}" -eq 1 ] && [ "${SYSTEMD_READY:-0}" != 0 ]; then
+    if [ "${SYSTEMD_READY:-0}" != 0 ]; then
+        boot="${DEVNAME}"
+    fi
+done
+boot="${boot:-/dev/disk/by-label/boot}"
+
 destination=/usr/lib/ignition
 mkdir -p $destination
 
@@ -27,6 +41,7 @@ else
     mkdir -p $bootmnt
     # mount as read-only since we don't strictly need write access and we may be
     # running alongside other code that also has it mounted ro
-    mount -o ro /dev/disk/by-label/boot $bootmnt
+
+    mount -o ro $boot $bootmnt
     copy_file_if_exists "${bootmnt}/ignition/config.ign" "${destination}/user.ign"
 fi
