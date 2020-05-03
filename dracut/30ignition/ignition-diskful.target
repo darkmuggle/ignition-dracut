@@ -5,7 +5,9 @@
 Description=Ignition Boot Disk Setup
 Documentation=https://github.com/coreos/ignition
 ConditionPathExists=/etc/initrd-release
+
 Before=ignition-complete.target
+Requires=systemd-udev-settle.service
 
 # Make sure we stop all the units before switching root
 Conflicts=initrd-switch-root.target umount.target

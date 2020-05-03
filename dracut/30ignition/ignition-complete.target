@@ -8,6 +8,7 @@ Description=Ignition Complete
 Documentation=https://github.com/coreos/ignition
 ConditionPathExists=/etc/initrd-release
 Before=initrd.target
+After=ignition-device-ready.target
 
 # initrd.target has OnFailureJobMode=replace-irreversibly, which seems to
 # cause unit restart loops in the initramfs if one of our units fails.  Thus

@@ -1,0 +1,27 @@
+# Update the device mapper symlinks. During the early initramfs
+# symlink in /dev/disk/by-{label,id} are not available. On a regular
+# system you have use `root=/dev/mapper/mpatha4`.
+#
+# However, if you have an code that manipulates one of the backing
+# block devices, instead of the device-mapper target, then the
+# operation will fails since the device is locked.
+#
+# This unit runs when there are device-mapper targets and simply
+# ensures that the udev-rules are added before mounting either boot
+# or sysroot
+#
+# Finally, this is a relatively quick operation since the scope is
+# narrow; only virtual block devices are updated.
+[Unit]
+Description=Ignition Device Mapper Targets Ready
+
+After=sysinit.target
+Requires=systemd-udevd.service
+After=systemd-udevd.service
+
+ConditionPathExists=/sys/devices/virtual/block
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/udevadm trigger --action=add /sys/devices/virtual/block/* -w -v

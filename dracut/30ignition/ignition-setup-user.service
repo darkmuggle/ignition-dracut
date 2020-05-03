@@ -10,12 +10,10 @@ Before=ignition-disks.service
 Before=ignition-files.service
 
 # On diskful boots, ignition-generator adds Requires/After on
-# dev-disk-by\x2dlabel-boot.device.
+# Requires=mnt-boot.mount
+# After=mnt-boot.mount
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-# The MountFlags=slave is so the umount of /boot is guaranteed to happen
-# /boot will only be mounted for the lifetime of the unit.
-MountFlags=slave
 ExecStart=/usr/sbin/ignition-setup-user
